@@ -1,0 +1,24 @@
+# Specify a list of file that the Docker Context will ignore.
+# This exclude any file that Docker doesn't need.
+# The entries in this file are that most people uses.
+
+# Git
+.git
+.gitignore
+
+# Docker
+# An hidden file that may be created in the project that contains
+# specific info for Docker to work on the local machine.
+.docker
+
+# Python
+# Removing __pycache__ may avoid error due to saved context from
+# local machine that may not be compatible with the alpine image.
+# We use /*/*... because .dockergitignore does not support /**/
+app/__pycache__/
+app/*/__pycache__/
+app/*/*/__pycache__/
+app/*/*/*/__pycache__/
+.env/
+.venv/
+venv/

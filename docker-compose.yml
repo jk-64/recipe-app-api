@@ -1,0 +1,40 @@
+# Docker-compose syntax version: 3.9
+# This is used to avoid any break
+# if there is any new Docker compose version
+version: "3.10"
+
+# A docker-compose file is set for one or more services
+services:
+  # The name of the service that run the docker file is: app
+  app:
+
+    # build & context specify
+    # that we run the app in our current directory ('.': root dir)
+    build:
+      context: .
+      args:
+        - DEV=true
+
+    # Maps: "local_machine_port:docker_container_port"
+    ports:
+      - "8000:8000"
+
+    # Map local_machine_directory:docker_container_directory
+    # This permit to reflect automatically any change done locally
+    # into the running container in real time
+    volumes:
+      - ./app:/app
+
+    # The command used to run the service
+    # We will override this command by using: $docker compose run
+
+    # If we don't specify a command, the bellow command will be used.
+    command: >
+      sh -c "python manage.py runserver 0.0.0.0:8000"
+
+networks:
+  default:
+    driver: bridge
+    driver_opts:
+      'com.docker.network.enable_ipv4': 'true'
+      'com.docker.network.enable_ipv6': 'false'
