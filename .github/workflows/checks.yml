@@ -1,0 +1,65 @@
+# Three dash to express that the file is type 'yml'
+---
+# The name on GitHub actions: Checks
+name: Checks
+
+# We set a trigger each time we push our project after a commit
+on: [push]
+
+# Create the job to run
+# The job id is 'test-lint'.
+# This is need for GitHub actions internals
+jobs:
+  test-lint:
+    # The name is human reading for the GitHub UI
+    name: Test and Lint
+
+    # The runner that will run our job
+    # The runner is the OS to run the job on
+    # For project like python, it is advised to run a Linux OS
+    # REM: SEE GITHUB ACTIONS WEBSITE FOR MORE INFO
+    runs-on: ubuntu-24.04
+
+    # Setup the steps to run for the job.
+    steps:
+      # We define the first step of the job
+      - name: Login to Docker-Hub
+
+        # We use a pre-made action defined in GitHub actions
+        # REM: we also can create our own actions to use
+
+        # An action is a Docker Container with a configuration
+        # to perform a certain task
+        # docker/login-action@v3:
+        #   action to log in to docker using version 3
+        uses: docker/login-action@v3
+
+        # This describes the parameters we set up - I p17 -
+        with:
+          username: ${{ secrets.DOCKERHUB_USER }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # We define a second step
+      # if the first one is completed successfully.
+
+      # Checkout is an action provided by GitHub automatically.
+      # It checks our code out inside the GitHub Actions job.
+
+      # By default, the code is not checked out inside the job.
+      # The reason is that sometime, we don't need to check the code
+
+      # In our case, we need to access the code to lint and test it
+      # Checkout permits to be sure that the code is available
+      # for next step.
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # The code has been checked out OK.
+      # We run the unittests
+      - name: Test
+        # The CLI to run the test on our project
+        run: docker-compose run --rm app sh -c "python manage.py test"
+
+      # The next step is to run the linting
+      - name: Lint
+        run: docker-compose run --rm app sh -c "flake8"
