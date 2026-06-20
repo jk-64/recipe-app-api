@@ -4,7 +4,7 @@
 
 # We exclude all files created by Django
 exclude =
-    migration,
+    migrations,
     __pycache__,
     manage.py,
     settings.py
