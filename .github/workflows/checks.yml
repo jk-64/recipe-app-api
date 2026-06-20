@@ -58,8 +58,8 @@ jobs:
       # We run the unittests
       - name: Test
         # The CLI to run the test on our project
-        run: docker-compose run --rm app sh -c "python manage.py test"
+        run: docker compose run --rm app sh -c "python manage.py test"
 
       # The next step is to run the linting
       - name: Lint
-        run: docker-compose run --rm app sh -c "flake8"
+        run: docker compose run --rm app sh -c "flake8"
