@@ -48,6 +48,12 @@ ARG DEV=false
 # 8- User's name: django-user
 RUN python -m venv /py && \
     /py/bin/pip install --upgrade pip && \
+    # We install the dependencies for psycopg2 \
+    apk add --update --no-cache postgresql-client && \
+    # We create a virtual dependency to group temporary packages \
+    apk add --update --no-cache --virtual .tmp-build-deps \
+      build-base postgresql-dev musl-dev && \
+    # NOTE: we set the requirements AFTER postgres client build \
     /py/bin/pip install -r /tmp/requirements.txt && \
     # Adding an if statement for development status  \
     # to run a shell command conditionally \
@@ -55,6 +61,8 @@ RUN python -m venv /py && \
       then /py/bin/pip install -r /tmp/requirements.dev.txt ; \
     fi && \
     rm -rf /tmp && \
+    # We remove the dependencies for psycopg2 from .tmp-build-deps \
+    apk del .tmp-build-deps && \
     adduser \
     --disabled-password \
     --no-create-home \

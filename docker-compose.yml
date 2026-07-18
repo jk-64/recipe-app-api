@@ -32,6 +32,45 @@ services:
     command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
 
+    # We define the environment variables
+    # for Django to connect the Postgres DB
+    environment:
+      # As using docker compose,
+      # we can use the name of the service as the hostname
+      # THE VALUES MATCH THE DB SERVICE ENV. VARIABLES
+      - DB_HOST:db
+      - DB_NAME:devdb
+      - DB_USER:devuser
+      - DB_PASS:changeme
+    depends_on:
+      - db
+
+  # Adding the database service
+  db:
+    image: postgres:14-alpine
+    volumes:
+      - dev-db-data:/var/lib/postgresql/data
+
+    # We set the environment variables
+    # They are the initial db configuration for this new db service
+    #   database name: devdb
+    #   database user: devuser
+    #   database user's password: changeme
+    # REM: THIS IS OK ONLY FOR DEVELOPMENT.
+    # NEVER HARDCODE CREDENTIALS ON PRODUCTION DATABASE !!!!
+    environment:
+      - POSTGRES_DB=devdb
+      - POSTGRES_USER=devuser
+      - POSTGRES_PASSWORD=changeme
+
+
+# We name and create volumes
+volumes:
+  # We create a volume w/o any information after ':'
+  # because it will be handled automatically
+  # and set to the 'default location' by the file system.
+  dev-db-data:
+
 networks:
   default:
     driver: bridge
