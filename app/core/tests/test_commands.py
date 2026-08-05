@@ -36,7 +36,7 @@ from django.test import SimpleTestCase
 class CommandTests(SimpleTestCase):
     """Test commands."""
 
-    ##### - TEST 1 -
+    ##### - TEST 1 -    # noqa
     # REM: because of @patch() that moke check, we need to add
     # an argument to each call that we make to our test methods.
     # Here the added argument is: patched_check
@@ -60,7 +60,7 @@ class CommandTests(SimpleTestCase):
         # called w/ the DATABASES parameter in settings.py: default
         patched_check.assert_called_once_with(databases=['default'])
 
-    ##### - TEST 2 -
+    ##### - TEST 2 -    # noqa
     # The wait_for_db() command has to sleep between calls.
     # The command does: check db -> wait (sleep) -> check again ...
 
