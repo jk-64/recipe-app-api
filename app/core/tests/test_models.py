@@ -4,7 +4,6 @@ Test for models.
 from unittest.mock import patch
 from decimal import Decimal
 
-from django.contrib.auth.models import PermissionsMixin
 # Base class for test
 from django.test import TestCase
 
