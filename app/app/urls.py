@@ -11,7 +11,7 @@ from django.urls import path, include
 from django.conf import settings  # To retrieve settings
 from django.conf.urls.static import static  # To use static URLs
 
-from core import views as core_views
+# from core import views as core_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
