@@ -6,7 +6,6 @@ import os
 
 from django.conf import settings
 
-from django.contrib.auth.base_user import AbstractBaseUser
 from django.db import models  # noqa
 from django.contrib.auth.models import (
     AbstractBaseUser,  # Functionalities for auth system (no fields)

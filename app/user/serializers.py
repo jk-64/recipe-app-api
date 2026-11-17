@@ -1,7 +1,6 @@
 """
 Serializers for the user API view.
 """
-import email
 
 from django.contrib.auth import (
     get_user_model,

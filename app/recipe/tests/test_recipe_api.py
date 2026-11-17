@@ -21,7 +21,6 @@ from recipe.serializers import (
     RecipeDetailSerializer,
 )
 
-from user import serializers
 
 RECIPES_URL = reverse('recipe:recipe-list')
 
@@ -657,5 +656,3 @@ class ImageUploadTests(TestCase):
             res.status_code,
             status.HTTP_400_BAD_REQUEST,
         )
-
-

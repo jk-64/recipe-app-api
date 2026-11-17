@@ -25,14 +25,12 @@ from recipe import serializers
             OpenApiParameter(
                 'tags',
                 OpenApiTypes.STR,
-                description=
-                "Comma separated list of tag IDs to filter.",
+                description="Comma separated list of tag IDs to filter.",
             ),
             OpenApiParameter(
                 'ingredients',
                 OpenApiTypes.STR,
-                description=
-                "Comma separated list of ingredient IDs to filter.",
+                description="Comma separated list of ingredient IDs to filter.",
             )
         ]
     )
@@ -121,6 +119,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST,
         )
+
 
 @extend_schema_view(
     list=extend_schema(

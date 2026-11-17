@@ -86,7 +86,6 @@ class UserAdmin(BaseUserAdmin):
     # UserAdmin overrides get_fieldsets to use this attribute
     # when creating a user.
 
-
     # https://docs.djangoproject.com/en/5.2/topics/
     # auth/customizing/#custom-users-and-django-contrib-admin
     add_fieldsets = (
@@ -111,5 +110,3 @@ admin.site.register(models.User, UserAdmin)
 admin.site.register(models.Recipe)
 admin.site.register(models.Tag)
 admin.site.register(models.Ingredient)
-
-

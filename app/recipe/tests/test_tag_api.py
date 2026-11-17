@@ -193,5 +193,3 @@ class PrivateTagsAPITest(TestCase):
         # We want to be certain that no tag duplication is
         # returned as we use on the queryset the method distinct()
         self.assertEqual(len(res.data), 1)
-
-
