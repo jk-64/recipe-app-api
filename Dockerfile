@@ -1,4 +1,4 @@
-# Python verson - alpine version (tag name)
+# Python version - alpine version (tag name)
 FROM python:3.10-alpine3.24
 
 # Define the maintainer. Best practice to know who develops
@@ -13,6 +13,7 @@ ENV PYTHONUNBUFFERED=1
 
 COPY ./requirements.txt /tmp/requirements.txt
 COPY ./requirements.dev.txt /tmp/requirements.dev.txt
+COPY ./scripts /scripts
 
 COPY ./app /app
 # The WORKDIR is use to run the commands on the Docker image.
@@ -49,10 +50,13 @@ ARG DEV=false
 RUN python -m venv /py && \
     /py/bin/pip install --upgrade pip && \
     # We install the dependencies for psycopg2 \
-    apk add --update --no-cache postgresql-client && \
+    # Packages needed for Pillow library: jpeg-dev \
+    apk add --update --no-cache postgresql-client jpeg-dev && \
     # We create a virtual dependency to group temporary packages \
+    # Packages needed for Pillow library: zlib zlib-dev \
+    # The uWSGI needs for installation: linux-headers \
     apk add --update --no-cache --virtual .tmp-build-deps \
-      build-base postgresql-dev musl-dev && \
+      build-base postgresql-dev musl-dev zlib zlib-dev linux-headers && \
     # NOTE: we set the requirements AFTER postgres client build \
     /py/bin/pip install -r /tmp/requirements.txt && \
     # Adding an if statement for development status  \
@@ -64,17 +68,27 @@ RUN python -m venv /py && \
     # We remove the dependencies for psycopg2 from .tmp-build-deps \
     apk del .tmp-build-deps && \
     adduser \
-    --disabled-password \
-    --no-create-home \
-    django-user
+        --disabled-password \
+        --no-create-home \
+        django-user && \
+    # Directory creation for static assets \
+    # -p: to create subdirectories in the specified path \
+    mkdir -p /vol/web/media && \
+    mkdir -p /vol/web/static && \
+    chown -R django-user:django-user /vol && \
+    chmod -R 755 /vol && \
+    chmod -R +x /scripts
 
 # Update the environment variable inside the image.
 # $PATH is an automatically created env. variable on Linux systems.
 # This define the directories where executables can be found.
 # The commands are directly from the virtual env. by adding: /py/bin
-ENV PATH="/py/bin:$PATH"
+ENV PATH="/scripts:/py/bin:$PATH"
 
 # This line should be the last line of the Dockerfile.
 # It specifies the user to swithch to.
 #          ALL LINES ABOVE ARE RUN BY THE ROOT USE.
 USER django-user
+
+# To run the cript inside /scripts folder uWSGI application
+CMD ["run.sh"]

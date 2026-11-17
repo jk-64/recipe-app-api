@@ -24,6 +24,8 @@ services:
     # into the running container in real time
     volumes:
       - ./app:/app
+      # Set volume to the directory created in the dockerfile.
+      - dev-static-data:/vol/web
 
     # The command used to run the service
     # We will override this command by using: $docker compose run
@@ -44,6 +46,7 @@ services:
       - DB_NAME=devdb
       - DB_USER=devuser
       - DB_PASS=changeme
+      - DEBUG=1
     depends_on:
       - db
 
@@ -72,6 +75,8 @@ volumes:
   # because it will be handled automatically
   # and set to the 'default location' by the file system.
   dev-db-data:
+  # Volume for static files
+  dev-static-data:
 
 networks:
   default:

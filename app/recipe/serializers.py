@@ -1,0 +1,127 @@
+"""
+Serializers for recipe APIs.
+"""
+from rest_framework import serializers
+
+from core.models import Recipe, Tag, Ingredient
+
+
+class TagSerializer(serializers.ModelSerializer):
+    """Serializer for tags."""
+
+    class Meta:
+        model = Tag
+        fields = ['id', 'name']
+        read_only_fields = ['id']
+
+
+class IngredientSerializer(serializers.ModelSerializer):
+    """Serializer for ingredients."""
+
+    class Meta:
+        model = Ingredient
+        fields = ['id', 'name']
+        read_only_fields = ['id']
+
+
+class RecipeSerializer(serializers.ModelSerializer):
+    """Serializer for recipes."""
+
+    tags = TagSerializer(many=True, required=False)
+    ingredients = IngredientSerializer(many=True, required=False)
+
+    class Meta:
+        model = Recipe
+
+        # We list the fields used with the serializer.
+        fields = [
+            'id', 'title', 'description', 'time_minutes', 'price',
+            'link', 'tags', 'ingredients',
+        ]
+
+        # We list the fields the user cannot change.
+        read_only_fields = ['id']
+
+    # Abstract the code to group common code
+    # between create() and update()
+    def _get_or_create_tags(self, tags, recipe):
+        """Handle getting or creating tags as needed."""
+
+        # Get auth user from context to attribute the tags
+        # to the correct user
+        auth_user = self.context['request'].user
+
+        for tag in tags:
+            tag_obj, created = Tag.objects.get_or_create(
+                user=auth_user,
+                **tag,  # **tag for future-proof
+            )
+            recipe.tags.add(tag_obj)
+
+    def _get_or_create_ingredients(self, ingredients, recipe):
+        """"Handle getting or creating ingredients as needed."""
+
+        # Get auth user from context to attribute the tags
+        # to the correct user
+        auth_user = self.context['request'].user
+
+        for ingredient in ingredients:
+            ingredient_obj, created = (
+                Ingredient.objects.get_or_create(
+                    user=auth_user,
+                    **ingredient,  # **ingredient for future-proof
+                )
+            )
+            recipe.ingredients.add(ingredient_obj)
+
+    def create(self, validated_data):
+        """Create a recipe."""
+        # Mind the syntax error. pop() 'tags' not 'tag'!!!!!!
+        tags = validated_data.pop('tags', [])
+        ingredients = validated_data.pop('ingredients', [])
+        recipe = Recipe.objects.create(**validated_data)
+        self._get_or_create_tags(tags, recipe)
+        self._get_or_create_ingredients(ingredients, recipe)
+
+        return recipe
+
+    # With an update, we need to change an existing instance
+    def update(self, instance, validated_data):
+        """Update recipe."""
+        # If there is no tags list, we return: None
+        tags = validated_data.pop('tags', None)
+        ingredients = validated_data.pop('ingredients', None)
+
+        if tags is not None:
+            instance.tags.clear()
+            self._get_or_create_tags(tags, instance)
+
+        if ingredients is not None:
+            instance.ingredients.clear()
+            self._get_or_create_ingredients(ingredients, instance)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+        return instance
+
+
+class RecipeDetailSerializer(RecipeSerializer):
+    """Serializer for recipe detail view."""
+
+    class Meta(RecipeSerializer.Meta):
+        fields = RecipeSerializer.Meta.fields + [
+            'description',
+            'image',
+        ]
+
+
+class RecipeImageSerializer(serializers.ModelSerializer):
+    """Serializer for uploading images to recipes."""
+
+    class Meta:
+        model = Recipe
+        fields = ['id', 'image']
+        read_only_fields = ['id']
+        extra_kwargs = {'images': {'required': 'True'}}
