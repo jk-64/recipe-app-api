@@ -18,8 +18,6 @@
       <excludeFolder url="file://$MODULE_DIR$/.venv" />
       <excludeFolder url="file://$MODULE_DIR$/print" />
       <excludeFolder url="file://$MODULE_DIR$/app/ttt" />
-      <excludeFolder url="file://$MODULE_DIR$/app/core/tests/test_health_check.py" />
-      <excludeFolder url="file://$MODULE_DIR$/app/core/views.py" />
     </content>
     <content url="file://$MODULE_DIR$/app" />
     <orderEntry type="jdk" jdkName="Docker Compose (app)" jdkType="Python SDK" />

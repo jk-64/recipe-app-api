@@ -11,17 +11,17 @@ from django.urls import path, include
 from django.conf import settings  # To retrieve settings
 from django.conf.urls.static import static  # To use static URLs
 
-# from core import views as core_views
+from core import views as core_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
     # Because it is only for test purposes, we add the url here
-    # path(
-    #     'api/health-check/',
-    #     core_views.health_check,
-    #     name='health-check',
-    # ),
+    path(
+        'api/health-check/',
+        core_views.health_check,
+        name='health-check',
+    ),
 
     # Path that generate the schema file associated with the project
     path(
